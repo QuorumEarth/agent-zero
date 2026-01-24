@@ -1,0 +1,67 @@
+# Coverage.py configuration
+# Best practices from Context7 pytest-cov documentation
+# Phase 1: Focus on helper modules with tests
+
+[run]
+# Enable branch coverage for more thorough analysis
+branch = true
+
+# Source directories to measure - only modules with tests in Phase 1
+source = 
+    python/helpers/strings.py
+    python/helpers/extract_tools.py
+    python/helpers/files.py
+    python/helpers/dirty_json.py
+
+# Patterns to omit from coverage
+omit =
+    */tests/*
+    */__pycache__/*
+    */venv/*
+    */.venv/*
+    */site-packages/*
+
+[report]
+# Decimal precision for coverage percentages
+precision = 2
+
+# Show line numbers of missing coverage
+show_missing = true
+
+# Lines to exclude from coverage reporting
+exclude_lines =
+    # Standard exclusions
+    pragma: no cover
+
+    # Debug-only code
+    def __repr__
+    def __str__
+
+    # Defensive assertions
+    raise AssertionError
+    raise NotImplementedError
+
+    # Non-runnable code
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+
+    # Abstract methods
+    @abstractmethod
+
+    # Ellipsis (placeholder)
+    \.\.\.
+
+# Phase 1 target: 30% on tested modules
+# Note: Overall helpers coverage will be lower until more tests added
+fail_under = 0
+
+[html]
+# HTML report output directory
+directory = tests/coverage_html
+
+# Show which contexts covered each line
+show_contexts = true
+
+[xml]
+# XML report output (for CI integration)
+output = tests/coverage.xml
