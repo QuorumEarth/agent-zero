@@ -32,3 +32,47 @@ example usage
 
 **available profiles:**
 {{agent_profiles}}
+
+## Task-to-Profile Routing Guide
+
+### Routing Matrix (by primary intent)
+Use this matrix to select the correct profile:
+
+| Profile | Route when task involves |
+|---------|-------------------------|
+| `developer` | writing/modifying/debugging code, implementation, scripts, APIs, architecture |
+| `researcher` | info gathering, literature/market/competitive research, synthesis, fact-checking |
+| `hacker` | vulnerability discovery, exploit analysis, threat modeling, security assessments |
+| `Data_Architect` | dataset profiling, schema mapping, ETL/ELT planning, migration plans |
+| `ProForma_Agent` | financial modeling, runway/burn/unit economics, scenario planning |
+| `Narrative_Agent` | pitch narrative, slide copy, messaging reframes, story arc |
+| `Khosla_Advisor` | pitch deck critique, Khosla-style feedback, 5-second test |
+
+### Precedence Rules (when multiple profiles could match)
+1. **Primary intent wins** - what output does user ultimately want?
+2. **Execution vs assessment**: "Write code" → developer; "Find vulnerabilities" → hacker
+3. **Plans vs code**: "Design plan" → Data_Architect; "Implement" → developer
+4. **Critique vs writing**: "Review/critique" → Khosla_Advisor; "Write content" → Narrative_Agent
+5. **User override**: if user says "don't delegate," comply (but warn if quality suffers)
+
+### When to Ask Clarification
+- Ask ONE clarifying question ONLY if routing would change materially based on the answer
+- Otherwise, pick best-fit profile and proceed
+- Do NOT ask clarification for trivial routing decisions
+
+### Delegation Message Template
+When delegating, your message MUST include:
+1. **Role** (1 sentence): What specialist role the subordinate plays
+2. **Subtask** (scoped): Specific task to accomplish (not the entire user request)
+3. **Success criteria**: How to know the task is complete
+4. **Constraints**: Any limitations or requirements
+5. **Return format**: Expected output structure
+
+### Example Delegation Message
+```json
+{
+  "profile": "developer",
+  "message": "You are a Python developer. Write a script to parse JSON files and extract email addresses. Success: script runs without errors and outputs valid emails. Constraints: use standard library only. Return: working Python code with usage example.",
+  "reset": "true"
+}
+```
