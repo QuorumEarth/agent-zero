@@ -1,3 +1,9 @@
+import pytest
+
+# Skip if heavy ML dependencies are not installed
+pytest.importorskip('sentence_transformers', reason='sentence_transformers not installed')
+pytest.importorskip('litellm', reason='litellm not installed')
+
 import os
 import sys
 
@@ -8,9 +14,6 @@ ex1 = "<think>reasoning goes here</think>response goes here"
 ex2 = "<think>reasoning goes here</thi"
 
 
-import pytest
-
-
 @pytest.mark.parametrize("example", [ex1, ex2])
 def test_example(example: str):
     res = models.ChatGenerationResult()
@@ -18,10 +21,3 @@ def test_example(example: str):
         char = example[i]
         chunk = res.add_chunk({"response_delta": char, "reasoning_delta": ""})
         print(i, ":", chunk)
-
-    print("output", res.output())
-
-
-if __name__ == "__main__":
-    # test_example(ex1)
-    test_example(ex2)

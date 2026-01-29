@@ -1,3 +1,9 @@
+import pytest
+
+# Skip if heavy ML dependencies are not installed
+pytest.importorskip('sentence_transformers', reason='sentence_transformers not installed')
+pytest.importorskip('litellm', reason='litellm not installed')
+
 import os
 import sys
 
@@ -5,13 +11,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import asyncio
 
-import pytest
-
 from python.helpers.dotenv import get_dotenv_value, load_dotenv
 from python.helpers.email_client import read_messages
 
 
-@pytest.mark.skip(reason="This test is disabled as it has eternal dependencies and tests nothing automatically, please move it to a script or a manual test")
+@pytest.mark.skip(reason="This test is disabled as it has external dependencies and tests nothing automatically, please move it to a script or a manual test")
 @pytest.mark.asyncio
 async def test():
     load_dotenv()

@@ -3,6 +3,12 @@
 Test script to verify FastA2A agent card routing and authentication.
 """
 
+import pytest
+
+# Skip if heavy ML dependencies are not installed
+pytest.importorskip('sentence_transformers', reason='sentence_transformers not installed')
+pytest.importorskip('litellm', reason='litellm not installed')
+
 import os
 import sys
 
@@ -11,9 +17,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import asyncio
 
-import pytest
-
 from python.helpers import settings
+
 
 
 def get_test_urls():
