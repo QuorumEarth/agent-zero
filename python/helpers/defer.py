@@ -1,8 +1,8 @@
 import asyncio
-from dataclasses import dataclass
 import threading
 from concurrent.futures import Future
-from typing import Any, Callable, Optional, Coroutine, TypeVar, Awaitable
+from dataclasses import dataclass
+from typing import Any, Awaitable, Callable, Coroutine, Optional, TypeVar
 
 T = TypeVar("T")
 

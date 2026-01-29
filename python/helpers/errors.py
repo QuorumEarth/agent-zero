@@ -1,6 +1,6 @@
+import asyncio
 import re
 import traceback
-import asyncio
 
 
 def handle_error(e: Exception):

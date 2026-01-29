@@ -1,22 +1,20 @@
-from typing import Any, List, Sequence
 import uuid
-from langchain_community.vectorstores import FAISS
+from typing import Any, List, Sequence
 
-# faiss needs to be patched for python 3.12 on arm #TODO remove once not needed
-from python.helpers import faiss_monkey_patch
 import faiss
-
-
-from langchain_core.documents import Document
+from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import InMemoryByteStore
 from langchain_community.docstore.in_memory import InMemoryDocstore
+from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores.utils import (
     DistanceStrategy,
 )
-from langchain.embeddings import CacheBackedEmbeddings
+from langchain_core.documents import Document
 from simpleeval import simple_eval
 
 from agent import Agent
+
+# faiss needs to be patched for python 3.12 on arm #TODO remove once not needed
 
 
 class MyFaiss(FAISS):
@@ -143,7 +141,7 @@ def get_comparator(condition: str):
         try:
             result = simple_eval(condition, {}, data)
             return result
-        except Exception as e:
+        except Exception:
             # PrintStyle.error(f"Error evaluating condition: {e}")
             return False
 

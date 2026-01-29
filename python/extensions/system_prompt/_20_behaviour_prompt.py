@@ -1,7 +1,6 @@
-from datetime import datetime
-from python.helpers.extension import Extension
 from agent import Agent, LoopData
 from python.helpers import files, memory
+from python.helpers.extension import Extension
 
 
 class BehaviourPrompt(Extension):
@@ -21,4 +20,3 @@ def read_rules(agent: Agent):
     else:
         rules = agent.read_prompt("agent.system.behaviour_default.md")
         return agent.read_prompt("agent.system.behaviour.md", rules=rules)
-  

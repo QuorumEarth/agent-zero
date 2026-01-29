@@ -17,7 +17,6 @@ Options:
 """
 
 import argparse
-import os
 import shutil
 import subprocess
 import sys
@@ -36,21 +35,21 @@ def copy_templates(tier, target, force=False, dry_run=False):
     if not tier_path.exists():
         log(f"Template tier '{tier}' not found at {tier_path}", "error")
         return None
-    
+
     files_copied = 0
     files_skipped = 0
-    
+
     for src_file in tier_path.rglob("*"):
         if src_file.is_dir():
             continue
         rel_path = src_file.relative_to(tier_path)
         dest_file = target / rel_path
-        
+
         if dest_file.exists() and not force:
             log(f"Skipping {rel_path} (exists, use --force to overwrite)", "warning")
             files_skipped += 1
             continue
-        
+
         if dry_run:
             log(f"Would copy: {rel_path}", "info")
         else:
@@ -58,7 +57,7 @@ def copy_templates(tier, target, force=False, dry_run=False):
             shutil.copy2(src_file, dest_file)
             log(f"Copied: {rel_path}", "success")
         files_copied += 1
-    
+
     return files_copied, files_skipped
 
 def init_git(target, dry_run=False):
@@ -106,40 +105,40 @@ def main():
     parser.add_argument("--no-hooks", action="store_true", help="Skip pre-commit installation")
     parser.add_argument("--dry-run", action="store_true", help="Show what would be done")
     parser.add_argument("--force", action="store_true", help="Overwrite existing files")
-    
+
     args = parser.parse_args()
     target = Path(args.target).resolve()
-    
-    print(f"\n🚀 Agent Zero GitHub Bootstrap")
+
+    print("\n🚀 Agent Zero GitHub Bootstrap")
     print(f"   Tier: {args.tier}")
     print(f"   Target: {target}")
     if args.dry_run:
-        print(f"   Mode: DRY RUN\n")
+        print("   Mode: DRY RUN\n")
     else:
         print()
-    
+
     if not target.exists():
         log(f"Target directory does not exist: {target}", "error")
         sys.exit(1)
-    
+
     log(f"Copying {args.tier} tier templates...", "info")
     result = copy_templates(args.tier, target, args.force, args.dry_run)
     if result:
         copied, skipped = result
         log(f"Copied {copied} files, skipped {skipped}", "success")
-    
+
     if not args.no_git:
         init_git(target, args.dry_run)
-    
+
     if not args.no_hooks:
         install_precommit(target, args.dry_run)
-    
-    print(f"\n✨ Bootstrap complete!")
+
+    print("\n✨ Bootstrap complete!")
     if not args.dry_run:
-        print(f"\nNext steps:")
-        print(f"  1. Review the generated files")
-        print(f"  2. Customize configs as needed")
-        print(f"  3. Run: git add . && git commit -m 'Initial setup'")
+        print("\nNext steps:")
+        print("  1. Review the generated files")
+        print("  2. Customize configs as needed")
+        print("  3. Run: git add . && git commit -m 'Initial setup'")
 
 if __name__ == "__main__":
     main()

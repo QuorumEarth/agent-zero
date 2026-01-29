@@ -1,20 +1,15 @@
-from abc import ABC, abstractmethod
-from fnmatch import fnmatch
-import json
-from ntpath import isabs
-import os
-import sys
-import re
 import base64
+import glob
+import json
+import mimetypes
+import os
+import re
 import shutil
 import tempfile
-from typing import Any
 import zipfile
-import importlib
-import importlib.util
-import inspect
-import glob
-import mimetypes
+from abc import ABC, abstractmethod
+from fnmatch import fnmatch
+from typing import Any
 
 
 class VariablesPlugin(ABC):
@@ -543,4 +538,3 @@ def list_files_in_dir_recursively(relative_path: str) -> list[str]:
             rel_path = os.path.relpath(file_path, abs_path)
             result.append(rel_path)
     return result
-    

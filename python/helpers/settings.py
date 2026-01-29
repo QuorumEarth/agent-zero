@@ -2,17 +2,16 @@ import base64
 import hashlib
 import json
 import os
-import re
 import subprocess
 from typing import Any, Literal, TypedDict, cast
 
 import models
-from python.helpers import runtime, whisper, defer, git
-from . import files, dotenv
+from python.helpers import defer, git, runtime, whisper
 from python.helpers.print_style import PrintStyle
 from python.helpers.providers import get_providers
 from python.helpers.secrets import get_default_secrets_manager
-from python.helpers import dirty_json
+
+from . import dotenv, files
 
 
 class Settings(TypedDict):
@@ -1649,14 +1648,14 @@ def _env_to_dict(data: str):
         line = line.strip()
         if not line or line.startswith('#'):
             continue
-        
+
         if '=' not in line:
             continue
-            
+
         key, value = line.split('=', 1)
         key = key.strip()
         value = value.strip()
-        
+
         # If quoted, treat as string
         if value.startswith('"') and value.endswith('"'):
             result[key] = value[1:-1].replace('\\"', '"')  # Unescape quotes
@@ -1668,7 +1667,7 @@ def _env_to_dict(data: str):
                 result[key] = json.loads(value)
             except (json.JSONDecodeError, ValueError):
                 result[key] = value
-    
+
     return result
 
 
@@ -1685,7 +1684,7 @@ def _dict_to_env(data_dict):
         else:
             # Numbers and other types as unquoted strings
             lines.append(f'{key}={value}')
-    
+
     return "\n".join(lines)
 
 

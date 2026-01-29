@@ -1,10 +1,8 @@
-from python.helpers.api import ApiHandler, Request, Response
-
 from agent import AgentContext, AgentContextType
-
-from python.helpers.task_scheduler import TaskScheduler
-from python.helpers.localization import Localization
+from python.helpers.api import ApiHandler, Request, Response
 from python.helpers.dotenv import get_dotenv_value
+from python.helpers.localization import Localization
+from python.helpers.task_scheduler import TaskScheduler
 
 
 class Poll(ApiHandler):
@@ -22,7 +20,7 @@ class Poll(ApiHandler):
         if ctxid:
             try:
                 context = self.use_context(ctxid, create_if_not_exists=False)
-            except Exception as e:
+            except Exception:
                 context = None
         else:
             context = None

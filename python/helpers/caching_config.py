@@ -26,10 +26,8 @@ Usage:
 """
 
 import os
-import re
 from dataclasses import dataclass
 from typing import Literal
-
 
 # Model-specific minimum token requirements for caching
 # Source: https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
@@ -41,14 +39,14 @@ MODEL_MIN_TOKENS = {
     'opus-4-1': 1024,
     'opus-4': 1024,
     'opus-3': 1024,  # deprecated
-    
+
     # Claude Sonnet models
     'sonnet-4.5': 1024,
     'sonnet-4-5': 1024,
     'sonnet-4': 1024,
     'sonnet-3.7': 1024,  # deprecated
     'sonnet-3-7': 1024,
-    
+
     # Claude Haiku models - IMPORTANT: Haiku 4.5 requires 4096!
     'haiku-4.5': 4096,
     'haiku-4-5': 4096,
@@ -73,14 +71,14 @@ def get_min_tokens_for_model(model_name: str) -> int:
     """
     if not model_name:
         return DEFAULT_MIN_TOKENS
-    
+
     model_lower = model_name.lower()
-    
+
     # Check for specific model patterns
     for pattern, min_tokens in MODEL_MIN_TOKENS.items():
         if pattern in model_lower:
             return min_tokens
-    
+
     # Fallback patterns for generic model names
     if 'haiku' in model_lower:
         # Check for version numbers
@@ -92,16 +90,16 @@ def get_min_tokens_for_model(model_name: str) -> int:
             return 2048  # Haiku 3
         else:
             return 4096  # Default to highest for unknown Haiku versions
-    
+
     if 'opus' in model_lower:
         if '4.5' in model_lower or '4-5' in model_lower or '45' in model_lower:
             return 4096  # Opus 4.5
         else:
             return 1024  # Other Opus versions
-    
+
     if 'sonnet' in model_lower:
         return 1024  # All Sonnet versions use 1024
-    
+
     # Default to conservative value for unknown models
     return DEFAULT_MIN_TOKENS
 
@@ -109,34 +107,34 @@ def get_min_tokens_for_model(model_name: str) -> int:
 @dataclass
 class CachingConfig:
     """Configuration for prompt caching features."""
-    
+
     enabled: bool
     scope: Literal['minimal', 'standard', 'aggressive']
-    
+
     @classmethod
     def from_env(cls) -> 'CachingConfig':
         """Load configuration from environment variables."""
         enabled = os.getenv('A0_ENABLE_PROMPT_CACHING', 'true').lower() == 'true'
         scope = os.getenv('A0_CACHE_SCOPE', 'standard')
-        
+
         # Validate scope
         valid_scopes = ('minimal', 'standard', 'aggressive')
         if scope not in valid_scopes:
             scope = 'standard'
-        
+
         return cls(
             enabled=enabled,
             scope=scope  # type: ignore
         )
-    
+
     def should_cache_tools(self) -> bool:
         """Whether to cache tool documentation."""
         return self.enabled and self.scope in ('minimal', 'standard', 'aggressive')
-    
+
     def should_cache_system_prompt(self) -> bool:
         """Whether to cache the base system prompt."""
         return self.enabled and self.scope in ('standard', 'aggressive')
-    
+
     def should_cache_examples(self) -> bool:
         """Whether to cache example content."""
         return self.enabled and self.scope == 'aggressive'
@@ -160,11 +158,11 @@ def get_caching_status(model_name: str = None) -> dict:
             'A0_CACHE_SCOPE': os.getenv('A0_CACHE_SCOPE', 'not set')
         }
     }
-    
+
     if model_name:
         status['model_name'] = model_name
         status['min_tokens_for_model'] = get_min_tokens_for_model(model_name)
-    
+
     return status
 
 
@@ -172,7 +170,7 @@ if __name__ == '__main__':
     import json
     print("Caching Configuration Status:")
     print(json.dumps(get_caching_status(), indent=2))
-    
+
     print("\nModel-specific minimum tokens:")
     test_models = [
         'claude-haiku-4-5-20251001',

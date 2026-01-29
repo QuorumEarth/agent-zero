@@ -1,19 +1,19 @@
 import asyncio
 import time
-from typing import Optional, cast
-from agent import Agent, InterventionException
 from pathlib import Path
+from typing import Optional, cast
 
-from python.helpers.tool import Tool, Response
-from python.helpers import files, defer, persist_chat, strings
-from python.helpers.browser_use import browser_use  # type: ignore[attr-defined]
-from python.helpers.print_style import PrintStyle
-from python.helpers.playwright import ensure_playwright_binary
-from python.helpers.secrets import get_secrets_manager
-from python.extensions.message_loop_start._10_iteration_no import get_iter_no
 from pydantic import BaseModel
-import uuid
+
+from agent import Agent, InterventionException
+from python.extensions.message_loop_start._10_iteration_no import get_iter_no
+from python.helpers import defer, files, persist_chat, strings
+from python.helpers.browser_use import browser_use  # type: ignore[attr-defined]
 from python.helpers.dirty_json import DirtyJson
+from python.helpers.playwright import ensure_playwright_binary
+from python.helpers.print_style import PrintStyle
+from python.helpers.secrets import get_secrets_manager
+from python.helpers.tool import Response, Tool
 
 
 class State:
@@ -49,7 +49,7 @@ class State:
 
         # for some reason we need to provide exact path to headless shell, otherwise it looks for headed browser
         pw_binary = ensure_playwright_binary()
-                
+
         self.browser_session = browser_use.BrowserSession(
             browser_profile=browser_use.BrowserProfile(
                 headless=True,
@@ -92,8 +92,8 @@ class State:
             except Exception as e:
                 PrintStyle().warning(f"Could not force set viewport size: {e}")
 
-        # --------------------------------------------------------------------------    
-        
+        # --------------------------------------------------------------------------
+
         # Add init script to the browser session
         if self.browser_session and self.browser_session.browser_context:
             js_override = files.get_abs_path("lib/browser/init_override.js")
@@ -395,7 +395,7 @@ class BrowserAgent(Tool):
     def _mask(self, text: str) -> str:
         try:
             return get_secrets_manager(self.agent.context).mask_values(text or "")
-        except Exception as e:
+        except Exception:
             return text or ""
 
     # def __del__(self):

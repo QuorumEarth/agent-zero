@@ -1,13 +1,13 @@
-from abc import abstractmethod
 import asyncio
-from collections import OrderedDict
-from collections.abc import Mapping
 import json
 import math
-from typing import Coroutine, Literal, TypedDict, cast, Union, Dict, List, Any
-from python.helpers import messages, tokens, settings, call_llm
-from enum import Enum
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage, AIMessage
+from abc import abstractmethod
+from collections.abc import Mapping
+from typing import Dict, List, TypedDict, Union, cast
+
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+
+from python.helpers import messages, settings, tokens
 
 BULK_MERGE_COUNT = 3
 TOPICS_KEEP_COUNT = 3
@@ -466,7 +466,7 @@ def _stringify_content(content: MessageContent) -> str:
     # already a string
     if isinstance(content, str):
         return content
-    
+
     # raw messages return preview or trimmed json
     if _is_raw_message(content):
         preview: str = content.get("preview", "") # type: ignore
@@ -476,7 +476,7 @@ def _stringify_content(content: MessageContent) -> str:
         if len(text) > RAW_MESSAGE_OUTPUT_TEXT_TRIM:
             return text[:RAW_MESSAGE_OUTPUT_TEXT_TRIM] + "... TRIMMED"
         return text
-    
+
     # regular messages of non-string are dumped as json
     return _json_dumps(content)
 

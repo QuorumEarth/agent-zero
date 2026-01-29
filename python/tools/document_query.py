@@ -1,7 +1,7 @@
 import asyncio
 
-from python.helpers.tool import Tool, Response
 from python.helpers.document_query import DocumentQueryHelper
+from python.helpers.tool import Response, Tool
 
 
 class DocumentQueryTool(Tool):
@@ -33,7 +33,7 @@ class DocumentQueryTool(Tool):
             def progress_callback(msg):
                 progress.append(msg)
                 self.log.update(progress="\n".join(progress))
-            
+
             helper = DocumentQueryHelper(self.agent, progress_callback)
             if not queries:
                 contents = await asyncio.gather(

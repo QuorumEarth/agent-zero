@@ -1,6 +1,8 @@
+from typing import Dict, List, Optional, TypedDict
+
 import yaml
+
 from python.helpers import files
-from typing import List, Dict, Optional, TypedDict
 
 
 # Type alias for UI option items
@@ -98,4 +100,4 @@ def get_raw_providers(provider_type: str) -> List[Dict[str, str]]:
 
 def get_provider_config(provider_type: str, provider_id: str) -> Optional[Dict[str, str]]:
     """Return metadata for a single provider (None if not found)."""
-    return ProviderManager.get_instance().get_provider_config(provider_type, provider_id) 
+    return ProviderManager.get_instance().get_provider_config(provider_type, provider_id)

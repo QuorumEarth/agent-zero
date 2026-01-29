@@ -1,7 +1,8 @@
 from abc import abstractmethod
-from typing import Any
-from python.helpers import extract_tools, files 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from python.helpers import extract_tools, files
+
 if TYPE_CHECKING:
     from agent import Agent
 

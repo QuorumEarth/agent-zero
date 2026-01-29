@@ -1,9 +1,10 @@
-import asyncio
 from datetime import datetime, timedelta, timezone
-from python.helpers.tool import Tool, Response
-from python.helpers.print_style import PrintStyle
-from python.helpers.wait import managed_wait
+
 from python.helpers.localization import Localization
+from python.helpers.print_style import PrintStyle
+from python.helpers.tool import Response, Tool
+from python.helpers.wait import managed_wait
+
 
 class WaitTool(Tool):
 
@@ -44,7 +45,7 @@ class WaitTool(Tool):
                     break_loop=False,
                 )
             target_time = now + wait_duration
-        
+
         if target_time <= now:
             return Response(
                 message=f"Target time {target_time.isoformat()} is in the past.",
@@ -85,5 +86,5 @@ class WaitTool(Tool):
     def get_heading(self, text: str = "", done: bool = False):
         done_icon = " icon://done_all" if done else ""
         if not text:
-            text = f"Waiting..."
+            text = "Waiting..."
         return f"icon://timer Wait: {text}{done_icon}"

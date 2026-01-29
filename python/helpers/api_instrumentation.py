@@ -16,11 +16,10 @@ Usage:
 
 import json
 import time
-import os
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
 # Log file location
 LOG_DIR = Path("/a0/logs/api_instrumentation")
@@ -69,7 +68,7 @@ def log_api_call_start(
         call_id: Unique identifier for this call (use in log_api_call_end)
     """
     call_id = str(uuid.uuid4())[:8]
-    
+
     _pending_calls[call_id] = {
         "call_id": call_id,
         "model": model_name,
@@ -80,7 +79,7 @@ def log_api_call_start(
         "message_count": len(messages),
         "extra_metadata": extra_metadata or {}
     }
-    
+
     return call_id
 
 
@@ -101,10 +100,10 @@ def log_api_call_end(
     """
     if call_id not in _pending_calls:
         return  # Silently ignore if call wasn't tracked
-    
+
     call_data = _pending_calls.pop(call_id)
     end_time = time.time()
-    
+
     # Build log entry
     log_entry = {
         "call_id": call_data["call_id"],
@@ -119,7 +118,7 @@ def log_api_call_end(
         "error": error,
         **call_data.get("extra_metadata", {})
     }
-    
+
     # Extract usage metrics from response
     if response is not None:
         usage = getattr(response, "usage", None)
@@ -128,11 +127,11 @@ def log_api_call_end(
             log_entry["prompt_tokens"] = getattr(usage, "prompt_tokens", None)
             log_entry["completion_tokens"] = getattr(usage, "completion_tokens", None)
             log_entry["total_tokens"] = getattr(usage, "total_tokens", None)
-            
+
             # Cache metrics (Anthropic-specific)
             log_entry["cache_creation_input_tokens"] = getattr(usage, "cache_creation_input_tokens", None)
             log_entry["cache_read_input_tokens"] = getattr(usage, "cache_read_input_tokens", None)
-            
+
             # Try to get from model_dump if attributes not directly available
             if hasattr(usage, "model_dump"):
                 usage_dict = usage.model_dump()
@@ -140,12 +139,12 @@ def log_api_call_end(
                     log_entry["cache_creation_input_tokens"] = usage_dict.get("cache_creation_input_tokens")
                 if log_entry.get("cache_read_input_tokens") is None:
                     log_entry["cache_read_input_tokens"] = usage_dict.get("cache_read_input_tokens")
-    
+
     # Write to log file (append mode, JSONL format)
     try:
         with open(LOG_FILE, "a") as f:
             f.write(json.dumps(log_entry) + "\n")
-    except Exception as e:
+    except Exception:
         # Silently fail - instrumentation should never break the main flow
         pass
 
@@ -162,9 +161,9 @@ def get_log_summary(last_n_hours: int = 24) -> Dict[str, Any]:
     """
     if not LOG_FILE.exists():
         return {"error": "No log file found", "total_calls": 0}
-    
+
     cutoff_time = datetime.now().timestamp() - (last_n_hours * 3600)
-    
+
     calls = []
     with open(LOG_FILE, "r") as f:
         for line in f:
@@ -176,10 +175,10 @@ def get_log_summary(last_n_hours: int = 24) -> Dict[str, Any]:
                     calls.append(entry)
             except (json.JSONDecodeError, ValueError):
                 continue
-    
+
     if not calls:
         return {"total_calls": 0, "period_hours": last_n_hours}
-    
+
     # Aggregate metrics
     total_prompt_tokens = sum(c.get("prompt_tokens") or 0 for c in calls)
     total_completion_tokens = sum(c.get("completion_tokens") or 0 for c in calls)
@@ -187,7 +186,7 @@ def get_log_summary(last_n_hours: int = 24) -> Dict[str, Any]:
     total_cache_read = sum(c.get("cache_read_input_tokens") or 0 for c in calls)
     total_duration = sum(c.get("duration_seconds") or 0 for c in calls)
     total_errors = sum(1 for c in calls if c.get("error"))
-    
+
     # Model breakdown
     models = {}
     for c in calls:
@@ -197,7 +196,7 @@ def get_log_summary(last_n_hours: int = 24) -> Dict[str, Any]:
         models[model]["calls"] += 1
         models[model]["prompt_tokens"] += c.get("prompt_tokens") or 0
         models[model]["completion_tokens"] += c.get("completion_tokens") or 0
-    
+
     return {
         "period_hours": last_n_hours,
         "total_calls": len(calls),
@@ -216,20 +215,20 @@ if __name__ == "__main__":
     # Test the instrumentation
     print("Testing API Instrumentation Module")
     print("=" * 40)
-    
+
     # Simulate a call
     test_messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "Hello, how are you?"}
     ]
-    
+
     call_id = log_api_call_start(
         model_name="anthropic/claude-3-haiku-20240307",
         messages=test_messages,
         session_id="test-session-123"
     )
     print(f"Started call: {call_id}")
-    
+
     # Simulate response
     class MockUsage:
         prompt_tokens = 50
@@ -237,14 +236,14 @@ if __name__ == "__main__":
         total_tokens = 70
         cache_creation_input_tokens = 40
         cache_read_input_tokens = 0
-    
+
     class MockResponse:
         usage = MockUsage()
-    
+
     time.sleep(0.1)  # Simulate API latency
     log_api_call_end(call_id, MockResponse())
     print("Logged call end")
-    
+
     # Get summary
     summary = get_log_summary(last_n_hours=1)
     print(f"\nSummary: {json.dumps(summary, indent=2)}")

@@ -1,6 +1,7 @@
 from typing import Any
-from python.helpers.extension import Extension
+
 from agent import LoopData
+from python.helpers.extension import Extension
 
 
 class SequentialThinkingPrompt(Extension):
