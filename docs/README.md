@@ -8,6 +8,10 @@ To begin with Agent Zero, follow the links below for detailed guides on various 
 - **[Extensibility](extensibility.md):** Learn how to create custom extensions for Agent Zero.
 - **[Connectivity](connectivity.md):** Learn how to connect to Agent Zero from other applications.
 - **[Architecture Overview](architecture.md):** Understand the internal workings of the framework.
+- **[Delegation System](delegation/):** Understand Agent Zero's delegation routing system.
+  - [Golden Routing Set](delegation/golden_routing_set.md) - Canonical routing examples
+  - [Adversarial Delegation Suite](delegation/adversarial_delegation_suite.md) - Pressure tests and edge cases
+  - [Validation Protocol](delegation/validation_protocol.md) - Manual validation procedure
 - **[Contributing](contribution.md):** Learn how to contribute to the Agent Zero project.
 - **[Troubleshooting and FAQ](troubleshooting.md):** Find answers to common issues and questions.
 

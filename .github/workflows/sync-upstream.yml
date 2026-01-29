@@ -1,0 +1,91 @@
+name: Sync Upstream
+
+# Automated sync of main branch with upstream agent0ai/agent-zero
+# Creates PR to merge upstream changes into quorum branch for review
+
+on:
+  schedule:
+    # Run weekly on Sunday at 3am UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  sync-upstream:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/frdel/agent-zero.git || true
+          git fetch upstream main
+
+      - name: Check for upstream changes
+        id: check_changes
+        run: |
+          UPSTREAM_COMMITS=$(git rev-list HEAD..upstream/main --count)
+          echo "upstream_commits=$UPSTREAM_COMMITS" >> $GITHUB_OUTPUT
+          if [ "$UPSTREAM_COMMITS" -gt 0 ]; then
+            echo "Found $UPSTREAM_COMMITS new commits from upstream"
+          else
+            echo "No new commits from upstream"
+          fi
+
+      - name: Sync main with upstream
+        if: steps.check_changes.outputs.upstream_commits > 0
+        run: |
+          git merge upstream/main --ff-only
+          git push origin main
+
+      - name: Create PR to quorum branch
+        if: steps.check_changes.outputs.upstream_commits > 0
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: sync/upstream-to-quorum
+          base: quorum
+          title: "🔄 Sync: Upstream changes from agent-zero"
+          body: |
+            ## Automated Upstream Sync
+
+            This PR contains **${{ steps.check_changes.outputs.upstream_commits }}** new commit(s) from upstream [frdel/agent-zero](https://github.com/frdel/agent-zero).
+
+            ### Review Checklist
+            - [ ] Review changes for conflicts with quorum customizations
+            - [ ] Check if any custom prompts need updates
+            - [ ] Verify MCP configurations are compatible
+            - [ ] Test locally if significant changes
+
+            ### After Merging
+            Run `git pull` on your local quorum branch to get the updates.
+
+            ---
+            *This PR was automatically created by the [sync-upstream workflow](.github/workflows/sync-upstream.yml)*
+          labels: |
+            upstream-sync
+            automated
+          delete-branch: true
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.check_changes.outputs.upstream_commits }}" -gt 0 ]; then
+            echo "✅ Synced ${{ steps.check_changes.outputs.upstream_commits }} commits from upstream"
+            echo "📋 PR created to merge changes into quorum branch"
+          else
+            echo "ℹ️ No upstream changes to sync"
+          fi

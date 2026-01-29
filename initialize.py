@@ -1,7 +1,6 @@
-from agent import AgentConfig
 import models
-from python.helpers import runtime, settings, defer
-from python.helpers.print_style import PrintStyle
+from agent import AgentConfig
+from python.helpers import defer, runtime, settings
 
 
 def initialize_agent(override_settings: dict | None = None):

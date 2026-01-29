@@ -1,10 +1,11 @@
 import asyncio
-from python.helpers import settings
-from python.helpers.extension import Extension
-from python.helpers.memory import Memory
-from python.helpers.dirty_json import DirtyJson
+
 from agent import LoopData
+from python.helpers import settings
+from python.helpers.dirty_json import DirtyJson
+from python.helpers.extension import Extension
 from python.helpers.log import LogItem
+from python.helpers.memory import Memory
 from python.tools.memory_load import DEFAULT_THRESHOLD as DEFAULT_MEMORY_THRESHOLD
 
 
@@ -17,7 +18,7 @@ class MemorizeSolutions(Extension):
 
         if not set["memory_memorize_enabled"]:
             return
- 
+
         # show full util message
         log_item = self.agent.context.log.log(
             type="util",

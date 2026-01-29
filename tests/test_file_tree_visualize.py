@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys
+import time
 from collections.abc import Iterable
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
-import sys
-import time
 from typing import Any, Callable, Dict, List, Optional
 
 try:
@@ -35,7 +35,6 @@ from python.helpers.file_tree import (
     file_tree,
 )
 from python.helpers.files import create_dir, delete_dir, get_abs_path, write_file
-
 
 BASE_TEMP_ROOT = "tmp/tests/file_tree/visualize"
 

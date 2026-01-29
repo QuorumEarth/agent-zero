@@ -1,46 +1,43 @@
-from abc import ABC, abstractmethod
-import re
-from typing import (
-    List,
-    Dict,
-    Optional,
-    Any,
-    TextIO,
-    Union,
-    Literal,
-    Annotated,
-    ClassVar,
-    cast,
-    Callable,
-    Awaitable,
-    TypeVar,
-)
-import threading
 import asyncio
-from contextlib import AsyncExitStack
-from shutil import which
-from datetime import timedelta
 import json
-from python.helpers import errors
-from python.helpers import settings
+import re
+import threading
+from abc import ABC, abstractmethod
+from contextlib import AsyncExitStack
+from datetime import timedelta
+from shutil import which
+from typing import (
+    Annotated,
+    Any,
+    Awaitable,
+    Callable,
+    ClassVar,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    TextIO,
+    TypeVar,
+    Union,
+    cast,
+)
 
 import httpx
-
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
-from mcp.client.sse import sse_client
-from mcp.client.streamable_http import streamablehttp_client
-from mcp.shared.message import SessionMessage
-from mcp.types import CallToolResult, ListToolsResult
 from anyio.streams.memory import (
     MemoryObjectReceiveStream,
     MemoryObjectSendStream,
 )
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.sse import sse_client
+from mcp.client.stdio import stdio_client
+from mcp.client.streamable_http import streamablehttp_client
+from mcp.shared.message import SessionMessage
+from mcp.types import CallToolResult, ListToolsResult
+from pydantic import BaseModel, Discriminator, Field, PrivateAttr, Tag
 
-from pydantic import BaseModel, Field, Discriminator, Tag, PrivateAttr
-from python.helpers import dirty_json
+from python.helpers import dirty_json, errors, settings
 from python.helpers.print_style import PrintStyle
-from python.helpers.tool import Tool, Response
+from python.helpers.tool import Response, Tool
 
 
 def normalize_name(name: str) -> str:
@@ -508,7 +505,7 @@ class MCPConfig(BaseModel):
         return normalized
 
     def __init__(self, servers_list: List[Dict[str, Any]]):
-        from collections.abc import Mapping, Iterable
+        from collections.abc import Iterable, Mapping
 
         # # DEBUG: Print the received servers_list
         # if servers_list:
@@ -849,7 +846,7 @@ class MCPClientBase(ABC):
                         original_exception = e
                     # Create a dummy exception to break out of the async block
                     raise RuntimeError("Dummy exception to break out of async block")
-        except Exception as e:
+        except Exception:
             # Check if this is our dummy exception
             if original_exception is not None:
                 e = original_exception

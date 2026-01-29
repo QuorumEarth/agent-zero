@@ -1,13 +1,14 @@
 import argparse
-import inspect
-import secrets
-from pathlib import Path
-from typing import TypeVar, Callable, Awaitable, Union, overload, cast
-from python.helpers import dotenv, rfc, settings, files
 import asyncio
-import threading
+import inspect
 import queue
+import secrets
 import sys
+import threading
+from pathlib import Path
+from typing import Awaitable, Callable, TypeVar, Union, cast, overload
+
+from python.helpers import dotenv, files, rfc, settings
 
 T = TypeVar("T")
 R = TypeVar("R")
@@ -133,7 +134,7 @@ def _get_rfc_password() -> str:
 def _get_rfc_url() -> str:
     set = settings.get_settings()
     url = set["rfc_url"]
-    if not "://" in url:
+    if "://" not in url:
         url = "http://" + url
     if url.endswith("/"):
         url = url[:-1]

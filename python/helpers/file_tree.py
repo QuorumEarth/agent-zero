@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import os
 from collections import deque
 from dataclasses import dataclass
 from datetime import datetime, timezone
-import os
-from typing import Any, Callable, Iterable, Literal, Optional, Sequence
+from typing import Any, Iterable, Literal, Optional, Sequence
 
 from pathspec import PathSpec
 

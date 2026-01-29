@@ -1,9 +1,10 @@
+import base64
+import fnmatch
 import os
 import shutil
-import fnmatch
-import base64
 import tempfile
 import zipfile
+
 from python.helpers import runtime
 
 

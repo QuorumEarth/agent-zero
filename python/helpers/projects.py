@@ -1,9 +1,8 @@
 import os
-from typing import Literal, TypedDict, TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, TypedDict
 
-from python.helpers import files, dirty_json, persist_chat, file_tree
+from python.helpers import dirty_json, file_tree, files, persist_chat
 from python.helpers.print_style import PrintStyle
-
 
 if TYPE_CHECKING:
     from agent import AgentContext
@@ -362,7 +361,7 @@ def get_file_structure(name: str, basic_data: BasicProjectData|None=None) -> str
     project_folder = get_project_folder(name)
     if basic_data is None:
         basic_data = load_basic_project_data(name)
-    
+
     tree = str(file_tree.file_tree(
         project_folder,
         max_depth=basic_data["file_structure"]["max_depth"],
@@ -379,4 +378,3 @@ def get_file_structure(name: str, basic_data: BasicProjectData|None=None) -> str
 
     return tree
 
-    

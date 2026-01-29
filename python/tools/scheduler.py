@@ -1,16 +1,25 @@
 import asyncio
-from datetime import datetime
 import json
 import random
 import re
-from python.helpers.tool import Tool, Response
-from python.helpers.task_scheduler import (
-    TaskScheduler, ScheduledTask, AdHocTask, PlannedTask,
-    serialize_task, TaskState, TaskSchedule, TaskPlan, parse_datetime, serialize_datetime
-)
+from datetime import datetime
+
 from agent import AgentContext
 from python.helpers import persist_chat
 from python.helpers.projects import get_context_project_name, load_basic_project_data
+from python.helpers.task_scheduler import (
+    AdHocTask,
+    PlannedTask,
+    ScheduledTask,
+    TaskPlan,
+    TaskSchedule,
+    TaskScheduler,
+    TaskState,
+    parse_datetime,
+    serialize_datetime,
+    serialize_task,
+)
+from python.helpers.tool import Response, Tool
 
 DEFAULT_WAIT_TIMEOUT = 300
 
@@ -164,7 +173,7 @@ class SchedulerTool(Tool):
         )
 
         # Validate cron expression, agent might hallucinate
-        cron_regex = "^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[A-Z]{3}(-[A-Z]{3})?) ?){5,7})$"
+        cron_regex = r"^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[A-Z]{3}(-[A-Z]{3})?) ?){5,7})$"
         if not re.match(cron_regex, task_schedule.to_crontab()):
             return Response(message="Invalid cron expression: " + task_schedule.to_crontab(), break_loop=False)
 

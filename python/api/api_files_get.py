@@ -1,9 +1,10 @@
 import base64
-import os
-from python.helpers.api import ApiHandler, Request, Response
-from python.helpers import files
-from python.helpers.print_style import PrintStyle
 import json
+import os
+
+from python.helpers import files
+from python.helpers.api import ApiHandler, Request, Response
+from python.helpers.print_style import PrintStyle
 
 
 class ApiFilesGet(ApiHandler):

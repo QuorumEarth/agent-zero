@@ -1,13 +1,15 @@
 import base64
 import os
-from datetime import datetime, timedelta
-from agent import AgentContext, UserMessage, AgentContextType
-from python.helpers.api import ApiHandler, Request, Response
-from python.helpers import files
-from python.helpers.print_style import PrintStyle
-from werkzeug.utils import secure_filename
-from initialize import initialize_agent
 import threading
+from datetime import datetime, timedelta
+
+from werkzeug.utils import secure_filename
+
+from agent import AgentContext, AgentContextType, UserMessage
+from initialize import initialize_agent
+from python.helpers import files
+from python.helpers.api import ApiHandler, Request, Response
+from python.helpers.print_style import PrintStyle
 
 
 class ApiMessage(ApiHandler):

@@ -1,26 +1,27 @@
 # noqa: D401 (docstrings) – internal helper
 import asyncio
-import uuid
 import atexit
-from typing import Any, List
 import contextlib
 import threading
+import uuid
+from typing import Any, List
 
-from python.helpers import settings
 from starlette.requests import Request
+
+from agent import AgentContext, AgentContextType, UserMessage
+from initialize import initialize_agent
+from python.helpers import settings
+from python.helpers.persist_chat import remove_chat
 
 # Local imports
 from python.helpers.print_style import PrintStyle
-from agent import AgentContext, UserMessage, AgentContextType
-from initialize import initialize_agent
-from python.helpers.persist_chat import remove_chat
 
 # Import FastA2A
 try:
-    from fasta2a import Worker, FastA2A  # type: ignore
+    from fasta2a import FastA2A, Worker  # type: ignore
     from fasta2a.broker import InMemoryBroker  # type: ignore
+    from fasta2a.schema import AgentProvider, Artifact, Message, Skill  # type: ignore
     from fasta2a.storage import InMemoryStorage  # type: ignore
-    from fasta2a.schema import Message, Artifact, AgentProvider, Skill  # type: ignore
     FASTA2A_AVAILABLE = True
 except ImportError:  # pragma: no cover – library not installed
     FASTA2A_AVAILABLE = False
