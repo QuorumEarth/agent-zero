@@ -20,7 +20,6 @@ import asyncio
 from python.helpers import settings
 
 
-
 def get_test_urls():
     """Get the URLs to test based on current settings."""
     try:
