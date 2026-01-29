@@ -130,3 +130,6 @@ agent_history.gif
 
 # Global rule to include .gitkeep files anywhere
 !**/.gitkeep
+
+# Backup archives
+backups/
