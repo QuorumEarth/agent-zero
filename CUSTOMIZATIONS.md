@@ -27,6 +27,7 @@ This document tracks all customizations made to the upstream Agent Zero framewor
 | C013 | Python Venv Environment Info | Prompt Enhancement | Adds venv detection guidance to environment prompts | `prompts/agent.system.main.environment.md`, `agents/hacker/prompts/agent.system.main.environment.md` | N/A |
 | C014 | Delegation Decision Protocol | Prompt Enhancement | Routing matrix for automatic subordinate delegation | `prompts/agent.system.behaviour_default.md` | N/A |
 | C015 | Routing Matrix Implementation | Prompt Enhancement | Added routing guidance to call_subordinate and solving prompts | prompts/agent.system.tool.call_sub.md, prompts/agent.system.main.solving.md | N/A |
+| C016 | Delegation Evaluation Artifacts | Documentation | Added golden routing set, adversarial test suite, and validation protocol | docs/delegation/*.md, docs/README.md | N/A |
 
 ## Specialized Agents Detail
 
