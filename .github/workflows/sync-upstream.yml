@@ -1,84 +1,91 @@
-# .github/workflows/sync-upstream.yml
-name: Sync Fork with Upstream
+name: Sync Upstream
+
+# Automated sync of main branch with upstream agent0ai/agent-zero
+# Creates PR to merge upstream changes into quorum branch for review
 
 on:
   schedule:
-    # Run weekly on Monday at 6:00 AM UTC
-    - cron: '0 6 * * 1'
+    # Run weekly on Sunday at 3am UTC
+    - cron: '0 3 * * 0'
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Dry run (no push)'
-        type: boolean
-        default: false
+    # Allow manual trigger from GitHub Actions UI
 
 jobs:
-  sync:
+  sync-upstream:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-      actions: write
-      
+
     steps:
-      - name: Checkout fork
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: main
-          
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
       - name: Add upstream remote
         run: |
-          git remote add upstream https://github.com/agent0ai/agent-zero.git
-          git fetch upstream
-          
-      - name: Sync main branch
-        id: sync
-        run: |
-          git merge upstream/main --no-edit
-        continue-on-error: true
+          git remote add upstream https://github.com/frdel/agent-zero.git || true
+          git fetch upstream main
 
-      - name: Push to main
-        if: ${{ steps.sync.outcome == 'success' && !inputs.dry_run }}
-        run: git push origin main
-          
-      - name: Create PR if conflicts
-        if: steps.sync.outcome == 'failure'
+      - name: Check for upstream changes
+        id: check_changes
+        run: |
+          UPSTREAM_COMMITS=$(git rev-list HEAD..upstream/main --count)
+          echo "upstream_commits=$UPSTREAM_COMMITS" >> $GITHUB_OUTPUT
+          if [ "$UPSTREAM_COMMITS" -gt 0 ]; then
+            echo "Found $UPSTREAM_COMMITS new commits from upstream"
+          else
+            echo "No new commits from upstream"
+          fi
+
+      - name: Sync main with upstream
+        if: steps.check_changes.outputs.upstream_commits > 0
+        run: |
+          git merge upstream/main --ff-only
+          git push origin main
+
+      - name: Create PR to quorum branch
+        if: steps.check_changes.outputs.upstream_commits > 0
         uses: peter-evans/create-pull-request@v5
         with:
-          title: "⚠️ Upstream sync requires manual resolution"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: sync/upstream-to-quorum
+          base: quorum
+          title: "🔄 Sync: Upstream changes from agent-zero"
           body: |
-            Automated sync with upstream failed due to conflicts.
-            
-            **Action Required:**
-            1. Check out this branch locally
-            2. Resolve conflicts
-            3. Push resolution
-            4. Merge this PR
-            
-            **Upstream changes:** https://github.com/agent0ai/agent-zero/commits/main
-          branch: upstream-sync-conflict
-          labels: upstream-sync,needs-attention
-          
-      - name: Trigger quorum branch update
-        if: ${{ steps.sync.outcome == 'success' && !inputs.dry_run }}
-        run: |
-          gh workflow run update-quorum.yml --repo ${{ github.repository }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ## Automated Upstream Sync
+
+            This PR contains **${{ steps.check_changes.outputs.upstream_commits }}** new commit(s) from upstream [frdel/agent-zero](https://github.com/frdel/agent-zero).
+
+            ### Review Checklist
+            - [ ] Review changes for conflicts with quorum customizations
+            - [ ] Check if any custom prompts need updates
+            - [ ] Verify MCP configurations are compatible
+            - [ ] Test locally if significant changes
+
+            ### After Merging
+            Run `git pull` on your local quorum branch to get the updates.
+
+            ---
+            *This PR was automatically created by the [sync-upstream workflow](.github/workflows/sync-upstream.yml)*
+          labels: |
+            upstream-sync
+            automated
+          delete-branch: true
 
       - name: Summary
         run: |
-          echo "## Sync Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- Sync outcome: ${{ steps.sync.outcome }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Dry run: ${{ inputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.sync.outcome }}" == "success" ]; then
-            echo "✅ Successfully synced with upstream" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check_changes.outputs.upstream_commits }}" -gt 0 ]; then
+            echo "✅ Synced ${{ steps.check_changes.outputs.upstream_commits }} commits from upstream"
+            echo "📋 PR created to merge changes into quorum branch"
           else
-            echo "⚠️ Sync failed - check for conflicts" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ No upstream changes to sync"
           fi
