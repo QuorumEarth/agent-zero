@@ -5,6 +5,11 @@ pytest.importorskip('sentence_transformers', reason='sentence_transformers not i
 pytest.importorskip('litellm', reason='litellm not installed')
 
 import os
+
+# Skip in CI environment - these tests require runtime environment
+if os.environ.get('CI') or os.environ.get('GITHUB_ACTIONS'):
+    pytest.skip('Skipping tests requiring runtime environment in CI', allow_module_level=True)
+
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -27,7 +32,3 @@ async def test():
         password=get_dotenv_value("TEST_EMAIL_PASSWORD"),
     )
     print(messages)
-
-
-if __name__ == "__main__":
-    asyncio.run(test())
