@@ -3,7 +3,7 @@
 ## Overview
 This document tracks all customizations made to the upstream Agent Zero framework.
 
-**Last Updated:** 2026-01-24
+**Last Updated:** 2026-01-29
 **Upstream Version:** 9fe5573 (Merge branch 'testing')
 **Fork Repository:** https://github.com/QuorumEarth/agent-zero
 **Divergence Estimate:** ~3% (39 files, 3,758 lines)
@@ -24,6 +24,7 @@ This document tracks all customizations made to the upstream Agent Zero framewor
 | C010 | GitHub Templates | Templates | Repository automation (3-tier) | `templates/github/*` | N/A |
 | C011 | API Instrumentation | Helper | API monitoring utilities | `python/helpers/api_instrumentation.py` | N/A |
 | C012 | Caching Config | Helper | Caching configuration | `python/helpers/caching_config.py` | N/A |
+| C013 | Python Venv Environment Info | Prompt Enhancement | Adds venv detection guidance to environment prompts | `prompts/agent.system.main.environment.md`, `agents/hacker/prompts/agent.system.main.environment.md` | N/A |
 
 ## Specialized Agents Detail
 
