@@ -25,6 +25,7 @@ This document tracks all customizations made to the upstream Agent Zero framewor
 | C011 | API Instrumentation | Helper | API monitoring utilities | `python/helpers/api_instrumentation.py` | N/A |
 | C012 | Caching Config | Helper | Caching configuration | `python/helpers/caching_config.py` | N/A |
 | C013 | Python Venv Environment Info | Prompt Enhancement | Adds venv detection guidance to environment prompts | `prompts/agent.system.main.environment.md`, `agents/hacker/prompts/agent.system.main.environment.md` | N/A |
+| C014 | Delegation Decision Protocol | Prompt Enhancement | Routing matrix for automatic subordinate delegation | `prompts/agent.system.behaviour_default.md` | N/A |
 
 ## Specialized Agents Detail
 
