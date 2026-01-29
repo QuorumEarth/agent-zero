@@ -28,6 +28,7 @@ This document tracks all customizations made to the upstream Agent Zero framewor
 | C014 | Delegation Decision Protocol | Prompt Enhancement | Routing matrix for automatic subordinate delegation | `prompts/agent.system.behaviour_default.md` | N/A |
 | C015 | Routing Matrix Implementation | Prompt Enhancement | Added routing guidance to call_subordinate and solving prompts | prompts/agent.system.tool.call_sub.md, prompts/agent.system.main.solving.md | N/A |
 | C016 | Delegation Evaluation Artifacts | Documentation | Added golden routing set, adversarial test suite, and validation protocol | docs/delegation/*.md, docs/README.md | N/A |
+| C017 | Validation Results Documentation | Documentation | Run 4 validation testing results with 15/15 tests passed (100% success rate) | docs/delegation/validation_results.md | N/A |
 
 ## Specialized Agents Detail
 
